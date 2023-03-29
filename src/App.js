@@ -1,36 +1,51 @@
-import { Alchemy, Network } from 'alchemy-sdk';
-import { useEffect, useState } from 'react';
-
-import './App.css';
-
-// Refer to the README doc for more information about using API
-// keys in client-side code. You should never do this in production
-// level code.
-const settings = {
-  apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
-  network: Network.ETH_MAINNET,
-};
-
+import { Alchemy, Network } from 'alchemy-sdk'
+import { useEffect, useState } from 'react'
+import LatestTransactions from './LatestTransactions'
+import LatestBlock from './LatestBlock'
+import LatestBlocks from './LatestBlocks'
+import './App.css'
+import 'bulma/css/bulma.css'
+import settings from './settings'
 
 // In this week's lessons we used ethers.js. Here we are using the
 // Alchemy SDK is an umbrella library with several different packages.
 //
 // You can read more about the packages here:
 //   https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
-const alchemy = new Alchemy(settings);
+const alchemy = new Alchemy(settings)
 
 function App() {
-  const [blockNumber, setBlockNumber] = useState();
+  const [lastBlockNumber, setLastBlockNumber] = useState()
 
   useEffect(() => {
-    async function getBlockNumber() {
-      setBlockNumber(await alchemy.core.getBlockNumber());
+    async function getLastBlockNumber() {
+      setLastBlockNumber(await alchemy.core.getBlockNumber())
     }
+    getLastBlockNumber()
+  })
 
-    getBlockNumber();
-  });
+  return (
+    <div>
+      <img
+        src="logo-black.png"
+        alt="EthExplorer"
+        style={{ width: '10%', height: '50%' }}
+      />
+      <LatestBlock blockNumber={lastBlockNumber} />
 
-  return <div className="App">Block Number: {blockNumber}</div>;
+      <section className="section">
+        <div className="container">
+          <div className="columns">
+            <div className="column">
+              <LatestBlocks />
+            </div>
+            <div className="column">
+              <LatestTransactions />
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  )
 }
-
-export default App;
+export default App
