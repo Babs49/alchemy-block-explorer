@@ -16,12 +16,29 @@ const alchemy = new Alchemy(settings)
 
 function App() {
   const [lastBlockNumber, setLastBlockNumber] = useState()
+  const [lastBlock, setLastBlock] = useState()
+  const [lastBlocks, setLastBlocks] = useState()
+
+  async function getLastBlock() {
+    setLastBlock(await alchemy.core.getBlock(lastBlockNumber))
+  }
+
+  async function getLastBlockNumber() {
+    setLastBlockNumber(await alchemy.core.getBlockNumber())
+  }
 
   useEffect(() => {
-    async function getLastBlockNumber() {
-      setLastBlockNumber(await alchemy.core.getBlockNumber())
+    if (!lastBlock || !lastBlockNumber) {
+      getLastBlockNumber()
+      getLastBlock()
     }
-    getLastBlockNumber()
+    setTimeout(() => {
+      getLastBlockNumber()
+      getLastBlock()
+    }, 12000)
+
+    console.log('block number App.js ', lastBlockNumber)
+    console.log('block  App.js ', lastBlock)
   })
 
   return (
@@ -29,15 +46,22 @@ function App() {
       <img
         src="logo-black.png"
         alt="EthExplorer"
-        style={{ width: '10%', height: '50%' }}
+        style={{
+          width: '10%',
+          height: '50%',
+          marginLeft: '2em',
+          marginTop: '2em',
+          display: 'flex',
+          justifyContent: 'center',
+        }}
       />
-      <LatestBlock blockNumber={lastBlockNumber} />
+      <LatestBlock block={lastBlock} />
 
       <section className="section">
         <div className="container">
           <div className="columns">
             <div className="column">
-              <LatestBlocks />
+              <LatestBlocks blocks={lastBlocks} />
             </div>
             <div className="column">
               <LatestTransactions />
